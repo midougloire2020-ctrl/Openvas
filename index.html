@@ -1,1 +1,275 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutoriel OpenVAS PFE - Windows</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+header {
+    background: #1e293b;
+    padding: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #38bdf8;
+}
+
+.section {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.code-container {
+    position: relative;
+    background: #020617;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+pre {
+    overflow-x: auto;
+    margin: 0;
+}
+
+button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #38bdf8;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+button:hover {
+    background: #0ea5e9;
+}
+
+@media (max-width: 600px) {
+    header {
+        font-size: 18px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+Tutoriel OpenVAS + Metasploitable + Juice Shop (Windows)
+</header>
+
+<div class="container">
+
+<div class="section">
+<h2>OBJECTIF</h2>
+<p>
+VM OpenVAS (scanner)<br>
+VM Metasploitable<br>
+Juice Shop (Docker)<br>
+Tout dans le même réseau
+</p>
+</div>
+
+<div class="section">
+<h2>ETAPE 1 - Installer VirtualBox</h2>
+<p>Télécharger et installer VirtualBox (Next → Next → Install)</p>
+</div>
+
+<div class="section">
+<h2>ETAPE 2 - Installer Docker + WSL</h2>
+
+<h3>Activer WSL</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>wsl --install</pre>
+</div>
+
+<p>
+Explication :
+wsl = Linux dans Windows
+--install = installe automatiquement Ubuntu
+</p>
+
+<h3>Vérifier Docker</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>docker --version</pre>
+</div>
+
+</div>
+
+<div class="section">
+<h2>ETAPE 3 - Créer VM OpenVAS</h2>
+<p>
+RAM : 6 Go<br>
+CPU : 2-4<br>
+Disque : 40 Go<br>
+Réseau : Host-Only Adapter
+</p>
+</div>
+
+<div class="section">
+<h2>ETAPE 4 - Installer OpenVAS</h2>
+
+<h3>Mise à jour</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>sudo apt update && sudo apt upgrade -y</pre>
+</div>
+
+<p>
+sudo = admin<br>
+apt update = liste logiciels<br>
+apt upgrade = mise à jour<br>
+-y = accepter automatiquement
+</p>
+
+<h3>Installation</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>sudo apt install gvm -y</pre>
+</div>
+
+<h3>Initialisation</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>sudo gvm-setup</pre>
+</div>
+
+<p>
+Télécharge vulnérabilités<br>
+Configure PostgreSQL<br>
+Crée admin
+</p>
+
+<h3>Vérification</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>sudo gvm-check-setup</pre>
+</div>
+
+<h3>Démarrer</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>sudo gvm-start</pre>
+</div>
+
+<h3>IP VM</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>ip a</pre>
+</div>
+
+<p>Accès navigateur :</p>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>https://IP_VM:9392</pre>
+</div>
+
+</div>
+
+<div class="section">
+<h2>ETAPE 5 - Metasploitable</h2>
+<p>
+Importer fichier .OVA dans VirtualBox<br>
+Configurer réseau Host-Only<br>
+Login : msfadmin / msfadmin
+</p>
+
+<h3>IP</h3>
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>ifconfig</pre>
+</div>
+
+</div>
+
+<div class="section">
+<h2>ETAPE 6 - Juice Shop</h2>
+
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>docker run -d -p 3000:3000 bkimminich/juice-shop</pre>
+</div>
+
+<p>
+-d = arrière-plan<br>
+-p = port<br>
+image = Juice Shop
+</p>
+
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>http://localhost:3000</pre>
+</div>
+
+</div>
+
+<div class="section">
+<h2>ETAPE 7 - Test réseau</h2>
+
+<div class="code-container">
+<button onclick="copyCode(this)">Copier</button>
+<pre>ping IP_Metasploitable</pre>
+</div>
+
+</div>
+
+<div class="section">
+<h2>ETAPE 8 - Scan OpenVAS</h2>
+<p>
+Créer Target<br>
+Ajouter IP<br>
+Créer Task<br>
+Lancer Scan
+</p>
+</div>
+
+<div class="section">
+<h2>RESULTAT</h2>
+<p>
+OpenVAS OK<br>
+Metasploitable OK<br>
+Juice Shop OK<br>
+Scan OK
+</p>
+</div>
+
+</div>
+
+<script>
+function copyCode(button) {
+    const code = button.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code);
+    button.innerText = "Copié!";
+    setTimeout(() => button.innerText = "Copier", 2000);
+}
+</script>
+
+</body>
+  </html>
